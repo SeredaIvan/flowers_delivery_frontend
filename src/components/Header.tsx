@@ -1,16 +1,12 @@
+
 import Link from "next/link";
 
-import { Flower } from "../types/Flower";
 type HeaderProps = {
-  selectedFlowers: Flower[];
+  showSortButtons?: boolean;
   children?: React.ReactNode;
 };
 
-const Header = ({ selectedFlowers, children }: HeaderProps) => {
-  const handleClick = () => {
-    localStorage.setItem("selectedFlowers", JSON.stringify(selectedFlowers));
-  };
-
+const Header = ({ showSortButtons = false, children }: HeaderProps) => {
   return (
     <header className="flex flex-row justify-between items-center h-[100px] p-10">
       <div className="flex flex-row justify-around gap-5 items-center">
@@ -20,18 +16,16 @@ const Header = ({ selectedFlowers, children }: HeaderProps) => {
         >
           Shop
         </Link>
-        <Link
-          href="/shopping-cart"
-          className="text-2xl hover:text-blue-700 text-blue-500"
-          onClick={handleClick}
-        >
+        <Link href="/shopping-cart" className="text-2xl hover:text-blue-700 text-blue-500">
           Shopping cart
         </Link>
       </div>
+
       <div className="flex flex-row justify-around gap-5">
-        {children&& children}
+        {showSortButtons && children}
       </div>
     </header>
   );
 };
-export default Header
+
+export default Header;

@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { Flower } from "../types/Flower";
 import {
   fetchFlowersByShopId,
@@ -7,24 +9,32 @@ import {
 import type { PaginatedResponse } from "../types/Fetchers";
 import FlowerCard from "./FlowersCard";
 import FlowerCardSkeleton from "./FlowerCardSkeleton";
+import { useSort } from "@/context/SortContext";
 
 type FlowersListProps = {
   shopId: number | null;
-  sortDirection: boolean | null;
-  setSelectedFlowers: React.Dispatch<React.SetStateAction<Flower[]>>;
 };
-const FlowersList = ({ shopId, sortDirection, setSelectedFlowers }: FlowersListProps) => {
+
+const FlowersList = ({ shopId }: FlowersListProps) => {
   const [flowers, setFlowers] = useState<Flower[]>([]);
   const [loading, setLoading] = useState(true);
   const [limit] = useState(12);
   const [offset, setOffset] = useState(0);
   const [total, setTotal] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  const sortDirection = useSort().sortDirection;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const fetchFlowers = async () => {
       setLoading(true);
       setError(null);
+
       try {
         let res: PaginatedResponse;
 
@@ -54,7 +64,7 @@ const FlowersList = ({ shopId, sortDirection, setSelectedFlowers }: FlowersListP
   }, [shopId, limit, offset]);
 
   useEffect(() => {
-    if (sortDirection !== null) {
+    if (mounted && sortDirection !== null) {
       setFlowers((prevFlowers) => {
         const sorted = [...prevFlowers].sort((a, b) =>
           sortDirection ? a.cost - b.cost : b.cost - a.cost
@@ -62,7 +72,7 @@ const FlowersList = ({ shopId, sortDirection, setSelectedFlowers }: FlowersListP
         return sorted;
       });
     }
-  }, [sortDirection]);
+  }, [sortDirection, mounted]);
 
   const handleNext = () =>
     setOffset((prev) => (prev + limit < total ? prev + limit : prev));
@@ -72,17 +82,16 @@ const FlowersList = ({ shopId, sortDirection, setSelectedFlowers }: FlowersListP
   const currentPage = Math.floor(offset / limit) + 1;
   const totalPages = Math.ceil(total / limit);
 
-  const addToCart = useCallback(
-    (flower: Flower) => {
-      setSelectedFlowers((prev) => {
-        if (!prev.find((f) => f.id === flower.id)) {
-          return [...prev, flower];
-        }
-        return prev;
-      });
-    },
-    [setSelectedFlowers]
-  );
+  if (!mounted)
+    return (
+      <div className="overflow-y-auto">
+        <ul className="grid grid-cols-3 gap-4">
+          {Array.from({ length: limit }).map((_, i) => (
+            <FlowerCardSkeleton key={i} />
+          ))}
+        </ul>
+      </div>
+    );
 
   return (
     <>
@@ -122,11 +131,7 @@ const FlowersList = ({ shopId, sortDirection, setSelectedFlowers }: FlowersListP
         {!loading && !error && (
           <ul className="grid grid-cols-3 gap-4">
             {flowers.map((flower) => (
-              <FlowerCard
-                flower={flower}
-                onAddToCart={addToCart}
-                key={flower.id}
-              />
+              <FlowerCard flower={flower} key={flower.id} />
             ))}
           </ul>
         )}

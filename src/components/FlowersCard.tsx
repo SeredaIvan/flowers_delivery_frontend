@@ -1,17 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import { Flower } from "../types/Flower";
+import { useCart } from "@/context/CartContext";
 
 type FlowerCardProps = {
   flower: Flower;
-  onAddToCart?: (flower: Flower) => void;
 };
 
-const FlowerCard = ({ flower, onAddToCart }: FlowerCardProps) => {
-  const [added, setAdded] = useState(false);
+const FlowerCard = ({ flower }: FlowerCardProps) => {
+  const { flowers, addFlower, removeFlower } = useCart();
 
-  const handleAdd = () => {
-    onAddToCart?.(flower);
-    setAdded(true);
+  const isInCart = flowers.some((f) => f.id === flower.id);
+
+  const handleClick = () => {
+    if (isInCart) {
+      removeFlower(flower.id);
+    } else {
+      addFlower(flower);
+    }
   };
 
   return (
@@ -36,15 +41,14 @@ const FlowerCard = ({ flower, onAddToCart }: FlowerCardProps) => {
 
       <div className="px-6 pb-4">
         <button
-          onClick={handleAdd}
-          disabled={added} 
-          className={`font-bold py-2 px-4 rounded ${
-            added
-              ? "bg-gray-400 text-white cursor-not-allowed"
+          onClick={handleClick}
+          className={`font-bold py-2 px-4 rounded transition-colors ${
+            isInCart
+              ? "bg-red-500 hover:bg-red-600 text-white"
               : "bg-blue-500 hover:bg-blue-700 text-white"
           }`}
         >
-          {added ? "Додано" : "Додати до кошика"}
+          {isInCart ? "Видалити з кошика" : "Додати до кошика"}
         </button>
       </div>
     </div>

@@ -10,6 +10,7 @@ type ShopsListProps = {
 };
 
 const ShopsList = ({ shops, loading, setSelectedShopId }: ShopsListProps) => {
+  
   if (loading) {
     return <ShopsListSkeleton />;
   }

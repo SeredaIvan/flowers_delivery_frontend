@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Flower } from "../types/Flower";
 
 type FlowerCardProps = {
@@ -7,6 +7,13 @@ type FlowerCardProps = {
 };
 
 const FlowerCard = ({ flower, onAddToCart }: FlowerCardProps) => {
+  const [added, setAdded] = useState(false);
+
+  const handleAdd = () => {
+    onAddToCart?.(flower);
+    setAdded(true);
+  };
+
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
       <img
@@ -28,14 +35,20 @@ const FlowerCard = ({ flower, onAddToCart }: FlowerCardProps) => {
       </div>
 
       <div className="px-6 pb-4">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Додати до кошика
+        <button
+          onClick={handleAdd}
+          disabled={added} 
+          className={`font-bold py-2 px-4 rounded ${
+            added
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-700 text-white"
+          }`}
+        >
+          {added ? "Додано" : "Додати до кошика"}
         </button>
       </div>
     </div>
   );
 };
-{
-  /**onClick={() => onAddToCart(flower)|} */
-}
+
 export default FlowerCard;

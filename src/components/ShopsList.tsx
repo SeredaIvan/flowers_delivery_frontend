@@ -8,6 +8,7 @@ type ShopsListProps = {
   loading: boolean;
   setSelectedShopId: (id: number | null) => void;
 };
+
 const ShopsList = ({ shops, loading, setSelectedShopId }: ShopsListProps) => {
   if (loading) {
     return <ShopsListSkeleton />;

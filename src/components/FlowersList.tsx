@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Flower } from "../types/Flower";
 import {
   fetchFlowersByShopId,
@@ -11,9 +11,9 @@ import FlowerCardSkeleton from "./FlowerCardSkeleton";
 type FlowersListProps = {
   shopId: number | null;
   sortDirection: boolean | null;
+  setSelectedFlowers: React.Dispatch<React.SetStateAction<Flower[]>>;
 };
-
-const FlowersList = ({ shopId, sortDirection }: FlowersListProps) => {
+const FlowersList = ({ shopId, sortDirection, setSelectedFlowers }: FlowersListProps) => {
   const [flowers, setFlowers] = useState<Flower[]>([]);
   const [loading, setLoading] = useState(true);
   const [limit] = useState(12);
@@ -52,17 +52,13 @@ const FlowersList = ({ shopId, sortDirection }: FlowersListProps) => {
 
     fetchFlowers();
   }, [shopId, limit, offset]);
-  /*переробити на fetch данних в бд api яка видає відразу відсортовані данні*/
+
   useEffect(() => {
     if (sortDirection !== null) {
       setFlowers((prevFlowers) => {
-        const sorted = [...prevFlowers].sort((a, b) => {
-          if (sortDirection) {
-            return a.cost - b.cost; 
-          } else {
-            return b.cost - a.cost; 
-          }
-        });
+        const sorted = [...prevFlowers].sort((a, b) =>
+          sortDirection ? a.cost - b.cost : b.cost - a.cost
+        );
         return sorted;
       });
     }
@@ -75,6 +71,18 @@ const FlowersList = ({ shopId, sortDirection }: FlowersListProps) => {
 
   const currentPage = Math.floor(offset / limit) + 1;
   const totalPages = Math.ceil(total / limit);
+
+  const addToCart = useCallback(
+    (flower: Flower) => {
+      setSelectedFlowers((prev) => {
+        if (!prev.find((f) => f.id === flower.id)) {
+          return [...prev, flower];
+        }
+        return prev;
+      });
+    },
+    [setSelectedFlowers]
+  );
 
   return (
     <>
@@ -114,7 +122,11 @@ const FlowersList = ({ shopId, sortDirection }: FlowersListProps) => {
         {!loading && !error && (
           <ul className="grid grid-cols-3 gap-4">
             {flowers.map((flower) => (
-              <FlowerCard flower={flower} key={flower.id} />
+              <FlowerCard
+                flower={flower}
+                onAddToCart={addToCart}
+                key={flower.id}
+              />
             ))}
           </ul>
         )}

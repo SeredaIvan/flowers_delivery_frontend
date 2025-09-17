@@ -1,19 +1,22 @@
 import { Shop } from "../types/Shop";
+import ShopTile from "./ShopTile";
+import ShopsListSkeleton from "./ShopListSkeleton";
+import React from "react";
+
 type ShopsListProps = {
   shops: Shop[];
+  loading:boolean
 };
-const ShopsList = ({ shops }: ShopsListProps) => {
+const ShopsList = ({ shops, loading }: ShopsListProps) => {
+  if (loading) {
+    return <ShopsListSkeleton />;
+  }
   return (
     <>
       <ul className="space-y-2">
         {shops && shops.length > 0 ? (
           shops.map((shop) => (
-            <li
-              key={shop.id}
-              className="p-2 bg-white rounded shadow hover:bg-blue-100 cursor-pointer"
-            >
-              {shop.name}
-            </li>
+            <ShopTile shop={shop}/>
           ))
         ) : (
           <li className="text-gray-500 italic">Магазини відсутні</li>
@@ -22,3 +25,5 @@ const ShopsList = ({ shops }: ShopsListProps) => {
     </>
   );
 };
+
+export default React.memo(ShopsList)

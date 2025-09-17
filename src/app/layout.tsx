@@ -31,6 +31,8 @@ function HeaderWithSort() {
 
   const showButtons = pathname === "/";
 
+  
+
   return (
     <Header showSortButtons={showButtons}>
       <Button onClick={() => setSortDirection(true)}>Sort by price asc</Button>

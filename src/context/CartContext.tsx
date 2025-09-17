@@ -9,6 +9,7 @@ type CartContextType = {
   addFlower: (flower: Flower) => void;
   updateQuantity: (id: number, quantity: number) => void;
   removeFlower: (id: number) => void;
+  clearCart: () => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -54,9 +55,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const removeFlower = (id: number) => {
     setFlowers((prev) => prev.filter((f) => f.id !== id));
   };
+  const clearCart = () => {
+    setFlowers([]);
+  };
 
   return (
-    <CartContext.Provider value={{ flowers, addFlower, updateQuantity, removeFlower }}>
+    <CartContext.Provider value={{ flowers, addFlower, updateQuantity, removeFlower,clearCart }}>
       {children}
     </CartContext.Provider>
   );

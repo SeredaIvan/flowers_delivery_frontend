@@ -35,6 +35,7 @@ export default function FlowersCartTiles() {
             >
               +
             </button>
+            <p className="text-gray-600">{flower.cost*flower.quantity} грн</p>
           </div>
 
           <button

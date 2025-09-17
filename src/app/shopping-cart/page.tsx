@@ -49,7 +49,7 @@ export default function ShoppingCart() {
 
       const data = await response.json();
       clearCart();
-      console.log("must redirect")
+
       router.push(`/orders/${data.order.id}`);
     } catch (error) {
       console.error("Помилка при запиті до сервера:", error);

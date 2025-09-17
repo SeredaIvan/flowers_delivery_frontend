@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { headers } from "next/headers";
 
 type OrderItem = {
   flowerId: number;
@@ -16,35 +15,33 @@ type Order = {
   items: OrderItem[];
 };
 
-export default function OrderPage() {
-  const params = useParams();
-  const [order, setOrder] = useState<Order | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface OrderPageProps {
+  params: { id: string };
+}
 
+export default async function OrderPage({ params }: OrderPageProps) {
   const orderId = params.id;
+  let order: Order | null = null;
+  let error: string | null = null;
 
-  useEffect(() => {
-    const fetchOrder = async () => {
-      try {
-        const res = await fetch(`/api/v1.0/orders/${orderId}`);
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || "Помилка при завантаженні замовлення");
-        }
-        const data = await res.json();
-        setOrder(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/api/v1.0/orders/${orderId}`,
+      {
+        cache: "no-store",
       }
-    };
+    );
 
-    fetchOrder();
-  }, [orderId]);
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Помилка при завантаженні замовлення");
+    }
 
-  if (loading) return <p>Завантаження...</p>;
+    order = await res.json();
+  } catch (err: any) {
+    error = err.message;
+  }
+
   if (error) return <p className="text-red-500">Помилка: {error}</p>;
   if (!order) return <p>Замовлення не знайдено</p>;
 

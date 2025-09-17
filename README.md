@@ -1,1 +1,1 @@
-Created header , and grid for main and aside information
+added shop view

@@ -1,6 +1,6 @@
 import { Shop } from "../types/Shop";
 
-export const shopFetch = async (): Promise<Shop[]> => {
+export const fetchAllShops = async (): Promise<Shop[]> => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_BACKEND_URL}/api/v1.0/shops/getAll`,

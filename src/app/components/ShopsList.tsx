@@ -6,8 +6,9 @@ import React from "react";
 type ShopsListProps = {
   shops: Shop[];
   loading:boolean
+  setSelectedShopId:(id: number) => void;
 };
-const ShopsList = ({ shops, loading }: ShopsListProps) => {
+const ShopsList = ({ shops, loading ,setSelectedShopId}: ShopsListProps) => {
   if (loading) {
     return <ShopsListSkeleton />;
   }
@@ -16,7 +17,7 @@ const ShopsList = ({ shops, loading }: ShopsListProps) => {
       <ul className="space-y-2">
         {shops && shops.length > 0 ? (
           shops.map((shop) => (
-            <ShopTile shop={shop}/>
+            <ShopTile shop={shop} setSelectedShopId={setSelectedShopId}/>
           ))
         ) : (
           <li className="text-gray-500 italic">Магазини відсутні</li>

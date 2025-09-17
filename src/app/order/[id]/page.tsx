@@ -16,11 +16,12 @@ type Order = {
 };
 
 interface OrderPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function OrderPage({ params }: OrderPageProps) {
-  const orderId = params.id;
+  const resolwedParams = await params
+  const orderId = resolwedParams.id
   let order: Order | null = null;
   let error: string | null = null;
 

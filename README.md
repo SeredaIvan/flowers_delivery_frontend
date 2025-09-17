@@ -1,1 +1,1 @@
-added shop view
+The page where users can choose a flower shop, then add bouquets or single flowers to the cart (get data from the database).

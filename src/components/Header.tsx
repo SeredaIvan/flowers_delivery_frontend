@@ -1,18 +1,14 @@
 import Link from "next/link";
-import Button from "./ux/ui/Button";
-import { Flower } from "../types/Flower";
-import { useRouter } from "next/navigation";
 
+import { Flower } from "../types/Flower";
 type HeaderProps = {
-  setSortDirection: (sortDirection: boolean | null) => void;
   selectedFlowers: Flower[];
+  children?: React.ReactNode;
 };
 
-const Header = ({ setSortDirection, selectedFlowers }: HeaderProps) => {
+const Header = ({ selectedFlowers, children }: HeaderProps) => {
   const handleClick = () => {
-    const router = useRouter();
-    const encoded = encodeURIComponent(JSON.stringify(selectedFlowers));
-    router.push(`/shopping-card?flowers=${encoded}`);
+    localStorage.setItem("selectedFlowers", JSON.stringify(selectedFlowers));
   };
 
   return (
@@ -25,23 +21,17 @@ const Header = ({ setSortDirection, selectedFlowers }: HeaderProps) => {
           Shop
         </Link>
         <Link
-          href=""
+          href="/shopping-cart"
           className="text-2xl hover:text-blue-700 text-blue-500"
           onClick={handleClick}
         >
-          Shopping card
+          Shopping cart
         </Link>
       </div>
       <div className="flex flex-row justify-around gap-5">
-        <Button onClick={() => setSortDirection(true)}>
-          Sort by price asc
-        </Button>
-        <Button onClick={() => setSortDirection(false)}>
-          Sort by price desc
-        </Button>
+        {children&& children}
       </div>
     </header>
   );
 };
-
-export default Header;
+export default Header
